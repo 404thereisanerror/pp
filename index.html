@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<head>
+  <style>   
+  body { margin: 0; } 
+  </style>
+  <script src="//unpkg.com/three"></script>
+  <script src="//unpkg.com/three-forcegraph"></script>
+  <script src="//unpkg.com/three-spritetext"></script>
+</head>
+
+<body>
+  
+  <div id="3d-graph"></div>
+  
+  <script type="importmap">{
+    "imports": {
+      "three": "https://unpkg.com/three/build/three.module.js"
+    }
+  }</script>
+  <script type="module">
+    import { TrackballControls } from '//unpkg.com/three/examples/jsm/controls/TrackballControls.js';
+    Object.assign(THREE , { TrackballControls });
+    
+    const N = 300;
+    const gData = {
+      nodes: [...Array(N).keys()].map(i => ({ id: i })),
+      links: [...Array(N).keys()]
+        .filter(id => id)
+        .map(id => ({
+          source: id,
+          target: Math.round(Math.random() * (id-1))
+        }))
+    };
+
+  const Graph = new ThreeForceGraph()
+      .jsonUrl('src/assets/bild8322.json')
+      .nodeAutoColorBy('group')
+      .nodeVal('size')
+      .nodeThreeObject(node => {
+          const sprite = new SpriteText(node.label);
+          sprite.material.depthWrite = false;
+          sprite.color = node.color;
+          sprite.textHeight = 8;
+          return sprite;
+        });
+        
+    const Graph2 = new ThreeForceGraph()
+      .jsonUrl('src/assets/tg8322.json')
+      .nodeAutoColorBy('group')
+      
+      .nodeThreeObject(node => {
+          const sprite = new SpriteText(node.label);
+          sprite.material.depthWrite = false;
+          sprite.color = node.color;
+          sprite.textHeight = node.size;
+          return sprite;
+        });
+
+        const Graph3 = new ThreeForceGraph()
+        .jsonUrl('src/assets/nzz8322.json')
+        .nodeAutoColorBy('group')
+        .nodeThreeObject(node => {
+          const sprite = new SpriteText(node.label);
+          sprite.material.depthWrite = false;
+          sprite.color = node.color;
+          sprite.textHeight = 8;
+          return sprite;
+        });
+
+    // Setup renderer
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.getElementById('3d-graph').appendChild(renderer.domElement);
+
+    // Setup scene
+    const scene = new THREE.Scene();
+    scene.add(Graph);
+    scene.add(Graph2);
+    scene.add(Graph3);
+    scene.add(new THREE.AmbientLight(0xbbbbbb));
+
+    // Position the graphs next to each other
+    Graph.position.x = -2000;
+    Graph2.position.x = 0;
+    Graph3.position.x = 2000;
+    
+    // Setup camera
+    const camera = new THREE.PerspectiveCamera();
+    camera.far = 10000;
+    camera.aspect = window.innerWidth/window.innerHeight;
+    camera.updateProjectionMatrix();
+    camera.lookAt(Graph.position);
+    camera.position.z = Math.cbrt(N) * 180;
+
+    // Add camera controls
+  const tbControls = new THREE.TrackballControls(camera, renderer.domElement);
+  
+    // Kick-off renderer
+    (function animate() { // IIFE
+      Graph.tickFrame();
+      Graph2.tickFrame();
+      Graph3.tickFrame();
+      
+      // Frame cycle
+      tbControls.update();
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    })();
+  </script>
+</body>
+</html>

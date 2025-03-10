@@ -33,7 +33,7 @@
     };
 
   const Graph = new ThreeForceGraph()
-      .jsonUrl('src/assets/bild8322.json')
+      .jsonUrl('bild8322.json')
       .nodeAutoColorBy('group')
       .nodeVal('size')
       .nodeThreeObject(node => {
@@ -45,7 +45,7 @@
         });
         
     const Graph2 = new ThreeForceGraph()
-      .jsonUrl('src/assets/tg8322.json')
+      .jsonUrl('tg8322.json')
       .nodeAutoColorBy('group')
       
       .nodeThreeObject(node => {
@@ -57,7 +57,7 @@
         });
 
         const Graph3 = new ThreeForceGraph()
-        .jsonUrl('src/assets/nzz8322.json')
+        .jsonUrl('nzz8322.json')
         .nodeAutoColorBy('group')
         .nodeThreeObject(node => {
           const sprite = new SpriteText(node.label);
